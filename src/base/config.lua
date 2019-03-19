@@ -99,6 +99,19 @@
 				return false
 			end
 
+			-- Can link mixed C++ with native projects
+
+			if cfg.language == "C++" then
+				if cfg.clr == p.ON then
+					return true
+				end
+			end
+			if target.language == "C++" then
+				if target.clr == p.ON then
+					return true
+				end
+			end
+
 			-- Can't link managed and unmanaged projects
 
 			local cfgManaged = project.isdotnet(cfg.project) or (cfg.clr ~= p.OFF)
@@ -492,6 +505,9 @@
 
 		for field in p.field.eachOrdered() do
 			local map = mappings[field.name]
+			if type(map) == "function" then
+				map = map(cfg, mappings)
+			end
 			if map then
 
 				-- Pass each cfg value in the list through the map and append the
